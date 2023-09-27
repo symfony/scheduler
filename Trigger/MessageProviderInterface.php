@@ -11,7 +11,14 @@
 
 namespace Symfony\Component\Scheduler\Trigger;
 
-interface StatefulTriggerInterface extends TriggerInterface
+use Symfony\Component\Scheduler\Generator\MessageContext;
+
+interface MessageProviderInterface
 {
-    public function continue(\DateTimeImmutable $startedAt): void;
+    /**
+     * @return iterable<object>
+     */
+    public function getMessages(MessageContext $context): iterable;
+
+    public function getId(): string;
 }
