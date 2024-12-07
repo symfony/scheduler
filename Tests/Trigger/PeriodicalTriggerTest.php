@@ -108,9 +108,9 @@ class PeriodicalTriggerTest extends TestCase
     /**
      * @dataProvider providerGetNextRunDates
      */
-    public function testGetNextRunDates(\DateTimeImmutable $from, TriggerInterface $trigger, array $expected, int $count = 0)
+    public function testGetNextRunDates(\DateTimeImmutable $from, TriggerInterface $trigger, array $expected, int $count)
     {
-        $this->assertEquals($expected, $this->getNextRunDates($from, $trigger, $count ?? \count($expected)));
+        $this->assertEquals($expected, $this->getNextRunDates($from, $trigger, $count));
     }
 
     public static function providerGetNextRunDates(): iterable
