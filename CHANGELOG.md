@@ -1,6 +1,11 @@
 CHANGELOG
 =========
 
+7.3
+---
+
+ * Add `TriggerNormalizer`
+
 7.2
 ---
 
