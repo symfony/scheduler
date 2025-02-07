@@ -10,6 +10,7 @@ CHANGELOG
 ---
 
  * Add capability to skip missed periodic tasks, only the last schedule will be called
+ * Add MessageHandler returned result to `PostRunEvent`
 
 6.4
 ---
