@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Scheduler\Tests\Messenger;
+namespace Symfony\Component\Scheduler\Tests\Messenger\Serializer\Normalizer;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Scheduler\Messenger\Serializer\Normalizer\SchedulerTriggerNormalizer;
@@ -21,10 +21,7 @@ class SchedulerTriggerNormalizerTest extends TestCase
 {
     private SchedulerTriggerNormalizer $normalizer;
 
-    /**
-     * @before
-     */
-    protected function setUpNormalizer(): void
+    protected function setUp(): void
     {
         $this->normalizer = new SchedulerTriggerNormalizer();
     }
