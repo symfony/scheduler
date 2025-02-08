@@ -57,8 +57,8 @@ class DispatchSchedulerEventListenerTest extends TestCase
         $listener->onMessageFailed($workerFailedEvent);
 
         $this->assertInstanceOf(PreRunEvent::class, $secondListener->preRunEvent);
-        $this->assertSame('result', $secondListener->postRunEvent->getResult());
         $this->assertInstanceOf(PostRunEvent::class, $secondListener->postRunEvent);
+        $this->assertSame('result', $secondListener->postRunEvent->getResult());
         $this->assertInstanceOf(FailureEvent::class, $secondListener->failureEvent);
         $this->assertEquals(new \Exception('failed'), $secondListener->failureEvent->getError());
     }
