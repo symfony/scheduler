@@ -46,6 +46,11 @@ class AddScheduleMessengerPass implements CompilerPassInterface
         $scheduleProviderIds = [];
         foreach ($container->findTaggedServiceIds('scheduler.schedule_provider') as $serviceId => $tags) {
             $name = $tags[0]['name'];
+
+            if (isset($scheduleProviderIds[$name])) {
+                throw new InvalidArgumentException(\sprintf('Schedule provider service "%s" can not replace already registered service "%s" for schedule "%s". Make sure to register only one provider per schedule name.', $serviceId, $scheduleProviderIds[$name], $name), 1);
+            }
+
             $scheduleProviderIds[$name] = $serviceId;
         }
 
