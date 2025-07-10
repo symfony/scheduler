@@ -36,7 +36,7 @@ class PeriodicalTrigger implements StatefulTriggerInterface
             }
 
             $this->intervalInSeconds = (int) $interval;
-            $this->description = sprintf('every %d seconds', $this->intervalInSeconds);
+            $this->description = \sprintf('every %d seconds', $this->intervalInSeconds);
 
             return;
         }
@@ -44,18 +44,18 @@ class PeriodicalTrigger implements StatefulTriggerInterface
         try {
             if (\is_string($interval) && 'P' === ($interval[0] ?? '')) {
                 $this->intervalInSeconds = $this->calcInterval(new \DateInterval($interval));
-                $this->description = sprintf('every %d seconds (%s)', $this->intervalInSeconds, $interval);
+                $this->description = \sprintf('every %d seconds (%s)', $this->intervalInSeconds, $interval);
 
                 return;
             }
 
             $i = $interval;
             if (\is_string($interval)) {
-                $this->description = sprintf('every %s', $interval);
+                $this->description = \sprintf('every %s', $interval);
                 $i = @\DateInterval::createFromDateString($interval);
 
                 if (false === $i) {
-                    throw new InvalidArgumentException(sprintf('Invalid interval "%s": ', $interval).error_get_last()['message']);
+                    throw new InvalidArgumentException(\sprintf('Invalid interval "%s": ', $interval).error_get_last()['message']);
                 }
             } else {
                 $a = (array) $interval;
@@ -65,13 +65,13 @@ class PeriodicalTrigger implements StatefulTriggerInterface
             if ($this->canBeConvertedToSeconds($i)) {
                 $this->intervalInSeconds = $this->calcInterval($i);
                 if ('DateInterval' === $this->description) {
-                    $this->description = sprintf('every %s seconds', $this->intervalInSeconds);
+                    $this->description = \sprintf('every %s seconds', $this->intervalInSeconds);
                 }
             } else {
                 $this->interval = $i;
             }
         } catch (\Exception $e) {
-            throw new InvalidArgumentException(sprintf('Invalid interval "%s": ', $interval instanceof \DateInterval ? 'instance of \DateInterval' : $interval).$e->getMessage(), 0, $e);
+            throw new InvalidArgumentException(\sprintf('Invalid interval "%s": ', $interval instanceof \DateInterval ? 'instance of \DateInterval' : $interval).$e->getMessage(), 0, $e);
         }
     }
 
@@ -98,7 +98,7 @@ class PeriodicalTrigger implements StatefulTriggerInterface
             $from = (float) $fromDate->format('U.u');
             $delta = $run->format('U.u') - $from;
             $recurrencesPassed = floor($delta / $this->intervalInSeconds);
-            $nextRunTimestamp = sprintf('%.6F', ($recurrencesPassed + 1) * $this->intervalInSeconds + $from);
+            $nextRunTimestamp = \sprintf('%.6F', ($recurrencesPassed + 1) * $this->intervalInSeconds + $from);
             $nextRun = \DateTimeImmutable::createFromFormat('U.u', $nextRunTimestamp)->setTimezone($fromDate->getTimezone());
 
             if ($this->from > $nextRun) {
