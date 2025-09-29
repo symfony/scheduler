@@ -217,7 +217,7 @@ class MessageGeneratorTest extends TestCase
 
         $scheduler = new MessageGenerator($schedule, 'dummy', clock: $clock, checkpoint: $checkpoint);
 
-        // Warmup. The first run is always returns nothing.
+        // Warmup. The first run always returns nothing.
         $this->assertSame([], iterator_to_array($scheduler->getMessages(), false));
         $this->assertEquals(self::makeDateTime('22:15:00'), $checkpoint->time());
 
@@ -240,7 +240,7 @@ class MessageGeneratorTest extends TestCase
     {
         $clock = new MockClock(self::makeDateTime('22:15:00'));
 
-        $message = RecurringMessage::every('1 minute', (object) ['id' => 'message']);
+        $message = RecurringMessage::every('1 minute', (object) ['id' => 'message'], until: self::makeDateTime('22:23:00'));
         $schedule = (new Schedule())->add($message);
 
         $cache = new ArrayAdapter();
@@ -249,7 +249,7 @@ class MessageGeneratorTest extends TestCase
 
         $scheduler = new MessageGenerator($schedule, 'dummy', clock: $clock, checkpoint: $checkpoint);
 
-        // Warmup. The first run is always returns nothing.
+        // Warmup. The first run always returns nothing.
         $this->assertSame([], iterator_to_array($scheduler->getMessages(), false));
         $this->assertEquals(self::makeDateTime('22:15:00'), $clock->now());
 
