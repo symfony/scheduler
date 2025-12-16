@@ -85,7 +85,7 @@ class AddScheduleMessengerPass implements CompilerPassInterface
                         '$expression' => $tagAttributes['expression'] ?? throw new InvalidArgumentException(\sprintf('Tag "scheduler.task" is missing attribute "expression" on service "%s".', $serviceId)),
                         '$timezone' => $tagAttributes['timezone'] ?? null,
                     ],
-                }, fn ($value) => null !== $value);
+                }, static fn ($value) => null !== $value);
 
                 $tasksPerSchedule[$scheduleName][] = $taskDefinition = (new Definition(RecurringMessage::class))
                     ->setFactory([RecurringMessage::class, $tagAttributes['trigger']])

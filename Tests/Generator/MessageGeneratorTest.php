@@ -362,7 +362,7 @@ class MessageGeneratorTest extends TestCase
 
     private function createMessage(object $message, string ...$runs): RecurringMessage
     {
-        $runs = array_map(fn ($time) => self::makeDateTime($time), $runs);
+        $runs = array_map(static fn ($time) => self::makeDateTime($time), $runs);
         sort($runs);
 
         $ticks = [self::makeDateTime(''), 0];
