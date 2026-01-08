@@ -32,7 +32,7 @@ class DispatchSchedulerEventListenerTest extends TestCase
 {
     public function testDispatchSchedulerEvents()
     {
-        $trigger = $this->createMock(TriggerInterface::class);
+        $trigger = $this->createStub(TriggerInterface::class);
         $defaultRecurringMessage = RecurringMessage::trigger($trigger, (object) ['id' => 'default']);
 
         $schedulerProvider = new SomeScheduleProvider([$defaultRecurringMessage]);
@@ -40,7 +40,7 @@ class DispatchSchedulerEventListenerTest extends TestCase
         $scheduleProviderLocator->expects($this->any())->method('has')->willReturn(true);
         $scheduleProviderLocator->expects($this->any())->method('get')->willReturn($schedulerProvider);
 
-        $context = new MessageContext('default', 'default', $trigger, $this->createMock(\DateTimeImmutable::class));
+        $context = new MessageContext('default', 'default', $trigger, new \DateTimeImmutable());
         $envelope = (new Envelope(new \stdClass()))->with(new ScheduledStamp($context));
 
         /** @var ContainerInterface $scheduleProviderLocator */
