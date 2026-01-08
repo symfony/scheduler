@@ -64,7 +64,11 @@ class AddScheduleMessengerPass implements CompilerPassInterface
                     /** @var AsCommand|null $attribute */
                     $attribute = ($container->getReflectionClass($serviceDefinition->getClass())->getAttributes(AsCommand::class)[0] ?? null)?->newInstance();
 
-                    $message = new Definition(RunCommandMessage::class, [$attribute?->name.(($tagAttributes['arguments'] ?? null) ? " {$tagAttributes['arguments']}" : '')]);
+                    if (\is_array($arguments = $tagAttributes['arguments'] ?? '')) {
+                        $arguments = implode(' ', array_map(static fn (string $token) => preg_match('{^[\w-]+$}', $token) ? $token : escapeshellarg($token), $arguments));
+                    }
+
+                    $message = new Definition(RunCommandMessage::class, [$attribute?->name.('' !== $arguments ? " $arguments" : '')]);
                 } else {
                     $message = new Definition(ServiceCallMessage::class, [$serviceId, $tagAttributes['method'] ?? '__invoke', (array) ($tagAttributes['arguments'] ?? [])]);
                 }
