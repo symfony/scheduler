@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Console\Tests\DependencyInjection;
+namespace Symfony\Component\Scheduler\Tests\DependencyInjection;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +21,7 @@ use Symfony\Component\Scheduler\DependencyInjection\AddScheduleMessengerPass;
 class AddScheduleMessengerPassTest extends TestCase
 {
     #[DataProvider('processSchedulerTaskCommandProvider')]
-    public function testProcessSchedulerTaskCommand(array $arguments, string $exceptedCommand)
+    public function testProcessSchedulerTaskCommand(array $arguments, string $expectedCommand)
     {
         $container = new ContainerBuilder();
 
@@ -42,7 +42,7 @@ class AddScheduleMessengerPassTest extends TestCase
         $messageArguments = $messageDefinition->getArgument('$message');
         $command = $messageArguments->getArgument(0);
 
-        $this->assertSame($exceptedCommand, $command);
+        $this->assertSame($expectedCommand, $command);
     }
 
     public static function processSchedulerTaskCommandProvider(): iterable
@@ -51,6 +51,9 @@ class AddScheduleMessengerPassTest extends TestCase
         yield 'null arguments' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => null], 'schedulable'];
         yield 'empty arguments' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => ''], 'schedulable'];
         yield 'test argument' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => 'test'], 'schedulable test'];
+        yield 'array arguments' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => ['arg1', 'arg2']], 'schedulable arg1 arg2'];
+        yield 'array arguments with spaces' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => ['hello world', 'foo']], 'schedulable '.escapeshellarg('hello world').' foo'];
+        yield 'empty array arguments' => [['trigger' => 'every', 'frequency' => '1 hour', 'arguments' => []], 'schedulable'];
     }
 }
 
