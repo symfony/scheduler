@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Scheduler\DependencyInjection;
 
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Messenger\RunCommandMessage;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -55,10 +56,13 @@ class AddScheduleMessengerPass implements CompilerPassInterface
                 $scheduleName = $tagAttributes['schedule'] ?? 'default';
 
                 if ($serviceDefinition->hasTag('console.command')) {
+                    $commandName = $serviceDefinition->getClass()::getDefaultName();
                     if (\is_array($arguments = $tagAttributes['arguments'] ?? '')) {
-                        $arguments = implode(' ', array_map(static fn (string $token) => preg_match('{^[\w-]+$}', $token) ? $token : escapeshellarg($token), $arguments));
+                        $input = (string) new ArrayInput(['command' => $commandName, ...$arguments]);
+                    } else {
+                        $input = $commandName.('' !== $arguments ? " $arguments" : '');
                     }
-                    $message = new Definition(RunCommandMessage::class, [$serviceDefinition->getClass()::getDefaultName().('' !== $arguments ? " $arguments" : '')]);
+                    $message = new Definition(RunCommandMessage::class, [$input]);
                 } else {
                     $message = new Definition(ServiceCallMessage::class, [$serviceId, $tagAttributes['method'] ?? '__invoke', (array) ($tagAttributes['arguments'] ?? [])]);
                 }
