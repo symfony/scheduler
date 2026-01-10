@@ -11,11 +11,8 @@
 
 namespace Symfony\Component\Scheduler\DependencyInjection;
 
-<<<<<<< HEAD
 use Symfony\Component\Console\Attribute\AsCommand;
-=======
 use Symfony\Component\Console\Input\ArrayInput;
->>>>>>> @{-1}
 use Symfony\Component\Console\Messenger\RunCommandMessage;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
