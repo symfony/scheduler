@@ -45,7 +45,7 @@ class DebugCommandTest extends TestCase
     public function testExecuteWithScheduleWithoutTriggerDoesNotDisplayMessage()
     {
         $schedule = new Schedule();
-        $schedule->add(RecurringMessage::trigger(new CallbackTrigger(fn () => null, 'test'), new \stdClass()));
+        $schedule->add(RecurringMessage::trigger(new CallbackTrigger(static fn () => null, 'test'), new \stdClass()));
 
         $schedules = $this->createMock(ServiceProviderInterface::class);
         $schedules
@@ -80,7 +80,7 @@ class DebugCommandTest extends TestCase
     public function testExecuteWithScheduleWithoutTriggerShowingNoNextRunWithAllOption()
     {
         $schedule = new Schedule();
-        $schedule->add(RecurringMessage::trigger(new CallbackTrigger(fn () => null, 'test'), new \stdClass()));
+        $schedule->add(RecurringMessage::trigger(new CallbackTrigger(static fn () => null, 'test'), new \stdClass()));
 
         $schedules = $this->createMock(ServiceProviderInterface::class);
         $schedules

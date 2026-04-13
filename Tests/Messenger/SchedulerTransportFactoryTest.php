@@ -41,8 +41,8 @@ class SchedulerTransportFactoryTest extends TestCase
 
         $factory = new SchedulerTransportFactory(
             new Container([
-                'default' => fn () => new SomeScheduleProvider([$defaultRecurringMessage]),
-                'custom' => fn () => new SomeScheduleProvider([$customRecurringMessage]),
+                'default' => static fn () => new SomeScheduleProvider([$defaultRecurringMessage]),
+                'custom' => static fn () => new SomeScheduleProvider([$customRecurringMessage]),
             ]),
             $clock,
         );
