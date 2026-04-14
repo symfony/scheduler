@@ -45,9 +45,7 @@ class AddScheduleMessengerPassTest extends TestCase
         $this->assertSame($expectedCommand, $command);
     }
 
-    /**
-     * @dataProvider processSchedulerTaskCommandNameFromTagProvider
-     */
+    #[DataProvider('processSchedulerTaskCommandNameFromTagProvider')]
     public function testProcessSchedulerTaskCommandNameFromTag(array $commandTagAttributes, string $expectedCommand)
     {
         $container = new ContainerBuilder();
