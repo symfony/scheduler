@@ -45,6 +45,37 @@ class AddScheduleMessengerPassTest extends TestCase
         $this->assertSame($expectedCommand, $command);
     }
 
+    /**
+     * @dataProvider processSchedulerTaskCommandNameFromTagProvider
+     */
+    public function testProcessSchedulerTaskCommandNameFromTag(array $commandTagAttributes, string $expectedCommand)
+    {
+        $container = new ContainerBuilder();
+
+        $definition = new Definition(SchedulableCommand::class);
+        $definition->addTag('console.command', $commandTagAttributes);
+        $definition->addTag('scheduler.task', ['trigger' => 'every', 'frequency' => '1 hour']);
+        $container->setDefinition(SchedulableCommand::class, $definition);
+
+        (new AddScheduleMessengerPass())->process($container);
+
+        $schedulerProvider = $container->getDefinition('scheduler.provider.default');
+        $calls = $schedulerProvider->getMethodCalls();
+
+        $messageDefinition = $calls[0][1][0];
+        $messageArguments = $messageDefinition->getArgument('$message');
+        $command = $messageArguments->getArgument(0);
+
+        $this->assertSame($expectedCommand, $command);
+    }
+
+    public static function processSchedulerTaskCommandNameFromTagProvider(): iterable
+    {
+        yield 'tag command attribute overrides attribute name' => [['command' => 'custom-name'], 'custom-name'];
+        yield 'tag command attribute with aliases' => [['command' => 'custom-name|alias1|alias2'], 'custom-name'];
+        yield 'tag command attribute with hidden leading pipe' => [['command' => '|real-name'], 'real-name'];
+    }
+
     public static function processSchedulerTaskCommandProvider(): iterable
     {
         yield 'no arguments' => [['trigger' => 'every', 'frequency' => '1 hour'], 'schedulable'];
