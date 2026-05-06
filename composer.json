@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "dragonmantank/cron-expression": "^3.1",
-        "symfony/cache": "^7.4|^8.0",
+        "symfony/cache": "^7.4.8|^8.0.8",
         "symfony/console": "^7.4|^8.0",
         "symfony/dependency-injection": "^7.4|^8.0",
         "symfony/event-dispatcher": "^7.4|^8.0",
