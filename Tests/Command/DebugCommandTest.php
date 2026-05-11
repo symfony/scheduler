@@ -40,8 +40,8 @@ class DebugCommandTest extends TestCase
 
         $tester->execute([], ['decorated' => false]);
 
-        $filler = str_repeat(' ', 92);
-        $this->assertSame("\nScheduler\n=========\n\n [ERROR] No schedules found.{$filler}\n\n", $tester->getDisplay(true));
+        $display = preg_replace('/ +$/m', '', $tester->getDisplay(true));
+        $this->assertSame("\nScheduler\n=========\n\n [ERROR] No schedules found.\n\n", $display);
     }
 
     public function testExecuteWithScheduleWithoutTriggerDoesNotDisplayMessage()
