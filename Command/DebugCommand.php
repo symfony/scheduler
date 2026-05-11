@@ -19,7 +19,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\RecurringMessage;
+use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 
 /**
@@ -78,28 +80,61 @@ final class DebugCommand extends Command
             return 2;
         }
 
-        $date = new \DateTimeImmutable($input->getOption('date'));
-        if ('now' !== $input->getOption('date')) {
+        $dateOption = $input->getOption('date');
+        $date = new \DateTimeImmutable($dateOption);
+        if ('now' !== $dateOption) {
             $io->comment(\sprintf('All next run dates computed from %s.', $date->format('r')));
         }
 
         foreach ($names as $name) {
             $io->section($name);
 
-            /** @var ScheduleProviderInterface $schedule */
-            $schedule = $this->schedules->get($name);
-            if (!$messages = $schedule->getSchedule()->getRecurringMessages()) {
+            /** @var Schedule $schedule */
+            $schedule = $this->schedules->get($name)->getSchedule();
+            if (!$messages = $schedule->getRecurringMessages()) {
                 $io->warning(\sprintf('No recurring messages found for schedule "%s".', $name));
 
                 continue;
             }
+            $effectiveDate = $date;
+            if ('now' === $dateOption && null !== $checkpoint = self::getStatefulCheckpointTime($schedule, $name)) {
+                $effectiveDate = $checkpoint;
+                $io->comment(\sprintf('Schedule "%s" is stateful: next run dates computed from stored checkpoint %s.', $name, $effectiveDate->format('r')));
+            }
             $io->table(
                 ['Trigger', 'Provider', 'Next Run'],
-                array_filter(array_map(self::renderRecurringMessage(...), $messages, array_fill(0, \count($messages), $date), array_fill(0, \count($messages), $input->getOption('all')))),
+                array_filter(array_map(self::renderRecurringMessage(...), $messages, array_fill(0, \count($messages), $effectiveDate), array_fill(0, \count($messages), $input->getOption('all')))),
             );
         }
 
         return 0;
+    }
+
+    /**
+     * Returns a stateful schedule's last-run time, read from its cache without populating it.
+     *
+     * This mirrors the worker's checkpoint storage (key and `[\DateTimeImmutable $time, int $index,
+     * \DateTimeImmutable $from]` tuple, owned by {@see \Symfony\Component\Scheduler\Generator\Checkpoint}).
+     * It is a best-effort base date for the displayed next runs, not an exact replay of the worker;
+     * anything unexpected falls back to `null` so `debug:scheduler` keeps using `now` instead of crashing.
+     */
+    private static function getStatefulCheckpointTime(Schedule $schedule, string $name): ?\DateTimeImmutable
+    {
+        if (!$state = $schedule->getState()) {
+            return null;
+        }
+
+        $checkpoint = $state->get('scheduler_checkpoint_'.$name, static function (ItemInterface $item, bool &$save) {
+            $save = false;
+
+            return null;
+        });
+
+        if (!\is_array($checkpoint)) {
+            return null;
+        }
+
+        return ($checkpoint[0] ?? null) instanceof \DateTimeImmutable ? $checkpoint[0] : null;
     }
 
     /**
