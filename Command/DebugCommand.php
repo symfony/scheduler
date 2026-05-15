@@ -64,6 +64,12 @@ final class DebugCommand extends Command
 
                   <info>php %command.full_name% --all</info>
 
+                To sort the displayed recurring messages by their next run date, use the <info>--sort</info> option:
+
+                  <info>php %command.full_name% --sort</info>
+
+                When combined with <info>--all</info>, rows with no next run date are listed first.
+
                 EOF
             )
         ;

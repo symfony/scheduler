@@ -25,7 +25,7 @@ class SchedulerTransport implements TransportInterface
     }
 
     /**
-     * @param int $fetchSize
+     * @param int $fetchSize Best-effort hint about how many messages can be received in one call
      */
     public function get(/* int $fetchSize = 1 */): iterable
     {
