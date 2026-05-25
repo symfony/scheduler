@@ -20,7 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
-use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 
